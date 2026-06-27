@@ -1,0 +1,1 @@
+PRINT_START EXTRUDER_TEMP=[first_layer_temperature] BED_TEMP=[first_layer_bed_temperature] PRINTER_MODEL="MK2.5S"

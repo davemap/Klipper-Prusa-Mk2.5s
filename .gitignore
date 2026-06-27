@@ -1,0 +1,9 @@
+# macOS noise
+.DS_Store
+**/.DS_Store
+
+# Klipper auto-generated state (never hand-edit / never deploy)
+**/saved_variables.cfg
+
+# The reference/ folder holds authoritative upstream files (SKR pinout + Prusa MK2.5S firmware
+# values + Klipper sample-lcd). They ARE tracked on purpose — do not ignore them.
