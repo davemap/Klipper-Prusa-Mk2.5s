@@ -52,7 +52,9 @@ Stock limits: max_feedrate {200,200,12,120}, max_accel {1000,1000,200,5000}.
 
 ## Still need from user (not blocking config authoring)
 
-- [ ] **Pi model** for the MK2.5S (3B+ vs 4 vs 5) — decides webcam res/fps headroom.
+- [x] **Pi model = Raspberry Pi 3B+** (same as the MK3S+ build). → keep webcams conservative (<=800x600,
+      <=15fps) on the shared USB 2.0 bus. Pi needs 5V — on this 12V machine, power it from a separate 5V
+      supply OR a 12V→5V buck converter off the printer PSU (don't back-feed the SKR's logic rail).
 - [ ] **SSH username** for `mk25s.local` (the MK3S+ build used `david`; confirm same).
 - [ ] **Webcam models** + target resolution/fps.
 - [ ] **HyperPixel model** (4.0 / 4.0 Square / 2.1 Round / other) — decides the dtoverlay line.
