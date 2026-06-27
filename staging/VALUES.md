@@ -15,7 +15,7 @@ Single source of truth for machine-specific values. Anything marked `TODO` must 
 | X/Y homing | **TMC2209 sensorless (StallGuard)** | `tmc2209.cfg` diag_pin + driver_SGTHRS (TUNE); mechanical fallback commented |
 | Z probe | **PINDA2** (no temp comp) → PROBE port PC14 | `skr-mini-e3-v3.cfg [probe]`; heat-soaked in PRINT_START |
 | Accelerometer | **BTT ADXL345** (USB) | `adxlmcu-BTT.cfg` (enabled only during input shaping) |
-| Display | **HyperPixel + KlipperScreen** primary; stock LCD wanted on board | `display.cfg` (see the EXP1 constraint note) |
+| Display | **Touchscreen-only**: HyperPixel + KlipperScreen (mini12864 later if a knob is wanted) | `display.cfg` (beeper only on the board side) |
 | Pi | **New dedicated Pi**, hostname `mk25s` → `mk25s.local` | deploy with `./deploy-config.sh <user>@mk25s.local` |
 | Filament dia | 1.75 mm | `filament_diameter: 1.750` |
 
@@ -56,7 +56,8 @@ Stock limits: max_feedrate {200,200,12,120}, max_accel {1000,1000,200,5000}.
 - [ ] **SSH username** for `mk25s.local` (the MK3S+ build used `david`; confirm same).
 - [ ] **Webcam models** + target resolution/fps.
 - [ ] **HyperPixel model** (4.0 / 4.0 Square / 2.1 Round / other) — decides the dtoverlay line.
-- [ ] **Display decision** — given the EXP1 pin limit (see display.cfg / CHANGES.md): keep HyperPixel-only,
-      or fit a BTT mini12864 for an on-printer knob? (Stock Prusa LCD can't fully fit EXP1.)
+- [x] **Display decision = touchscreen-only** (HyperPixel + KlipperScreen). The stock Prusa LCD/knob
+      can't fit the SKR's single EXP1 header; a BTT mini12864 is the drop-in if a physical knob is wanted
+      later (block in reference/klipper-sample-lcd.cfg). `display.cfg` now wires only the beeper.
 - [ ] **Confirm the SKR board revision is V3.0** (this build assumes V3.0 pinout).
 - [ ] **Confirm bed leveling / frame** is square before tuning.

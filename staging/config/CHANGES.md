@@ -36,16 +36,17 @@ firmware). Nothing measured-on-hardware was fabricated — those are TODO/VERIFY
 | Bed thermistor | EPCOS 100K B57560G104F | Prusa MK42 standard; verify if temps read off. |
 | Run currents | X/Y/Z 0.55A, E 0.45A (RMS) | Conservative TMC2209 equivalents of Prusa's ~0.75A-peak RAMBo currents. Tune. |
 
-## Display (read this — it's a real constraint)
-You asked to wire the **stock Prusa LCD** to the board. The SKR Mini E3 V3 has only **one** LCD header
-(EXP1, no EXP2) with **7 usable GPIO** (EXP1_4 is RESET). A parallel HD44780 + rotary encoder + beeper
-needs 10 signals — **they don't all fit**. So `display.cfg`:
-- Leaves the **BEEPER active** on EXP1_1 (PB5) — that fits, so M300/feedback tones work.
-- Provides a commented **BTT mini12864** block (SPI — *does* fit) if you want a real on-printer menu knob.
-- Provides a commented **status-only HD44780** block, flagged that the encoder can't be added.
-- Points at the **HyperPixel + KlipperScreen** as the primary UI (klipperscreen/SETUP-NOTES.md).
-> Also note: FAN2 (PB15) shares a pin with EXP1_8, so it's unavailable when a display is on EXP1 — you
-> don't need it (FAN0 part-cooling + FAN1 hotend cover the MK2.5S).
+## Display (decision: TOUCHSCREEN-ONLY)
+The SKR Mini E3 V3 has only **one** LCD header (EXP1, no EXP2) with **7 usable GPIO** (EXP1_4 is RESET).
+A parallel Prusa HD44780 + rotary encoder + beeper needs ~10 signals — **they don't all fit**. And in
+Klipper a bare encoder only drives the on-board `[display]` menu (which needs a board LCD) and does NOT
+control KlipperScreen — so wiring just the Prusa knob does nothing useful. **Decision: run the HyperPixel +
+KlipperScreen as the only UI.** So `display.cfg`:
+- Wires only the **BEEPER** on EXP1_1 (PB5) so M300/feedback tones work.
+- Points to the **BTT mini12864** (SPI graphic LCD + built-in encoder; fits EXP1) as the drop-in if a
+  physical knob is wanted later — copy the `uc1701` block from `reference/klipper-sample-lcd.cfg`.
+> Also note: FAN2 (PB15) shares a pin with EXP1_8 — irrelevant here (FAN0 part-cooling + FAN1 hotend
+> cover the MK2.5S; we don't use FAN2).
 
 ## Deliberately NOT changed
 - **Bed-mesh faulty regions** from the MK3S+ build were **removed** (those magnet coords are MK52/MK3,

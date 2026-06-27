@@ -34,7 +34,7 @@ Everything staged here is meant to be `rsync`'d to that Pi so the on-device sess
 | System voltage | 24V | **12V** (power SKR VIN at 12V; never 24V) |
 | Z mechanics | 8mm lead | **8mm lead too** (verified from Prusa firmware; rotation_distance 8) |
 | Extruder e-steps | 22.96 | **24.06015** (MK2.5S firmware E=133 steps/mm — different gearing) |
-| Display | Einsy HD44780 | HyperPixel/KlipperScreen primary; **stock LCD can't fully fit the SKR's single EXP1** (see display.cfg) |
+| Display | Einsy HD44780 | **Touchscreen-only** — HyperPixel/KlipperScreen (stock LCD/knob can't fit the SKR's single EXP1; mini12864 is the drop-in for a knob later) |
 
 Authoritative sources used (in `reference/`):
 - `generic-bigtreetech-skr-mini-e3-v3.0.cfg` — official Klipper board pinout (FIXED pins).

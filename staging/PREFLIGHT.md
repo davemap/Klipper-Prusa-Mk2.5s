@@ -26,9 +26,9 @@ mainboard (miniRambo → SKR Mini E3 V3), so there's extra hardware work vs the 
       on-device (`QUERY_FILAMENT_SENSOR`).
 - [ ] **Sensorless homing:** install the **DIAG jumpers** for X and Y on the SKR so StallGuard reaches
       X-STOP/Y-STOP (see tmc2209.cfg). Without them, homing drives into the end of travel.
-- [ ] **Display:** decide before wiring — the stock Prusa parallel LCD does **not** fully fit the SKR's
-      single EXP1 header (see config/display.cfg). At minimum wire the **beeper** to EXP1_1. For a real
-      on-printer menu knob, a BTT mini12864 fits; otherwise rely on the HyperPixel/KlipperScreen.
+- [ ] **Display = touchscreen-only** (HyperPixel + KlipperScreen). No board LCD/knob to wire. Optionally
+      run a piezo to **EXP1_1 (PB5)** for M300 beeps. (Stock Prusa LCD/knob can't fit the SKR's single
+      EXP1 header; a BTT mini12864 is the drop-in later if you want a physical knob — see config/display.cfg.)
 
 ## SD cards (TWO different cards)
 - [ ] **microSD for the SKR board** — small, **FAT32**. Klipper firmware is flashed by copying
