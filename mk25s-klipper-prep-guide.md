@@ -57,7 +57,7 @@ mk25s/Klipper/
       macros.cfg                     # macros (PRINT_START defaults to MK2.5S + PINDA heat-soak)
       adxlmcu-BTT.cfg / -KUSBA.cfg   # accelerometer (enabled only during input shaping)
       CHANGES.md                     # every divergence from the MK3S+ build, with rationale
-    prusaslicer/                     # MK2.5S checklist + start/end gcode
+    prusaslicer/                     # importable 0.4mm printer profile (.ini) + checklist + start/end gcode
     webcam/                          # two-camera crowsnest config
     klipperscreen/                   # HyperPixel + KlipperScreen notes & installer
     scripts/                         # deploy + SKR firmware flash cheatsheets
