@@ -18,7 +18,9 @@ Test sensorless first; only wire the switches if it fails.
 - [ ] X/Y/Z motors **installed and driving the real axes**, belts on and **tensioned** (loose belts are the
       #1 cause of flaky sensorless — ideally fit the belt tensioners first).
 - [ ] **X and Y DIAG jumpers** fitted on the board.
-- [ ] SKR flashed with Klipper + connected to the Pi. No heaters/probe needed.
+- [ ] SKR flashed with Klipper + connected to a **Klipper host**. It does NOT have to be the finished
+      MK2.5S Pi — Klipper needs a host (the SKR can't home on its own), but it can be: the new Pi (just
+      flash its MainsailOS card, ~15 min), the **MK3S's Pi**, or any Linux laptop/VM. No heaters/probe needed.
 - [ ] Deploy the configs, then load the test config:
       ```bash
       cd ~/printer_data/config
