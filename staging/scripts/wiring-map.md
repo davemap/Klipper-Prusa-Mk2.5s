@@ -5,7 +5,15 @@ connector and the Klipper pin it uses. **Label every Prusa cable before you unpl
 Pins are board-fixed (see `config/skr-mini-e3-v3.cfg` + `reference/`). Directions/polarity are verified
 in software (ON-PI-RUNBOOK step 7) — don't trust connector orientation.
 
-> Power the board's VIN from the printer's **12V** PSU. All fan/heater outputs switch VIN = 12V. Never 24V.
+> **Power (PSU → board).** The MK2.5S 12V PSU has TWO outputs — a **main 12V** and a dedicated
+> **heated-bed 12V** (same rail; the bed one is heavy-gauge for the ~11A bed). The SKR has only ONE power
+> input (VIN), no separate bed input. So:
+>  - **Main 12V → SKR "Power In" (VIN)**, + to +, − to − (verify polarity with a meter; reversed = dead board).
+>    Powers board, motors, hotend.
+>  - **Heated-bed 12V → the external bed MOSFET's power input** (Phase 2) → MOSFET out → bed. Routes the
+>    ~11A straight from the PSU through the MOSFET, bypassing the SKR — exactly what that output is for.
+>  - **Motor-only / bench test:** you don't need the bed output at all — just VIN.
+> All fan/heater outputs switch VIN = 12V. Never feed 24V.
 
 ## 🔴 READ FIRST — two things that aren't plug-and-play
 
