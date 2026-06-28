@@ -13,11 +13,18 @@ mainboard (miniRambo → SKR Mini E3 V3), so there's extra hardware work vs the 
       prints on stock firmware. Same for any HyperPixel/Pi bracket.
 
 ## Mainboard swap (miniRambo → SKR Mini E3 V3.0)
+> Full pin-by-pin mapping: `scripts/wiring-map.md`. The two non-obvious items are called out below.
 - [ ] **Confirm the board is a V3.0** (this config uses the V3.0 pinout).
 - [ ] **Power: 12V.** The MK2.5S PSU is 12V → wire it to the SKR VIN. The board's fan + heater outputs
       switch VIN, so fans/heaters see 12V (correct for this hardware). **Do NOT feed 24V.**
-- [ ] **Label every Prusa cable before unplugging** from the miniRambo: X/Y/Z/E motors, hotend heater,
-      hotend thermistor, bed heater, bed thermistor, part fan, hotend fan, PINDA, IR filament sensor.
+- [ ] **EXTERNAL BED MOSFET (buy one).** The 12V MK42 bed draws ~10–11 A — above what the SKR's onboard
+      bed terminal/FET should carry continuously (it's sized for 24V/~5A beds). Drive the bed through an
+      external 12V MOSFET module (or SSR) triggered by the board's HB output. The hotend (Revo ~3.3 A) is
+      fine on-board. → `scripts/wiring-map.md`.
+- [ ] **Dual Z motors.** The MK2.5S has Z-left + Z-right; the SKR has one Z port. Wire both to Z-MOT in
+      series and confirm both screws turn the same direction. → `scripts/wiring-map.md`.
+- [ ] **Label every Prusa cable before unplugging** from the miniRambo: X/Y/**both Z**/E motors, hotend
+      heater, hotend thermistor, bed heater, bed thermistor, part fan, hotend fan, PINDA, IR filament sensor.
 - [ ] **Motors:** Prusa motor connectors may not match SKR polarity. Direction WILL be verified in
       software (runbook step 7) — expect to flip some `!` on dir_pin. Don't assume.
 - [ ] **PINDA (Z probe):** signal → board **PROBE** port (PC14); power PINDA from 5V+GND. It's NPN
