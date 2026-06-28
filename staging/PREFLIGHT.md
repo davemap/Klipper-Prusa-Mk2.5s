@@ -17,10 +17,10 @@ mainboard (miniRambo → SKR Mini E3 V3), so there's extra hardware work vs the 
 - [ ] **Confirm the board is a V3.0** (this config uses the V3.0 pinout).
 - [ ] **Power: 12V.** The MK2.5S PSU is 12V → wire it to the SKR VIN. The board's fan + heater outputs
       switch VIN, so fans/heaters see 12V (correct for this hardware). **Do NOT feed 24V.**
-- [ ] **EXTERNAL BED MOSFET (buy one).** The 12V MK42 bed draws ~10–11 A — above what the SKR's onboard
-      bed terminal/FET should carry continuously (it's sized for 24V/~5A beds). Drive the bed through an
-      external 12V MOSFET module (or SSR) triggered by the board's HB output. The hotend (Revo ~3.3 A) is
-      fine on-board. → `scripts/wiring-map.md`.
+- [ ] **EXTERNAL BED MOSFET (✅ purchased — arrives tomorrow).** PHASED: TODAY run the bed direct to the
+      board's HB terminal (measure bed R first, keep heating short + attended); TOMORROW install the MOSFET
+      (PSU→IN, bed→OUT, HB→trigger) then re-run bed PID. The MOSFET does NOT gate today's bringup. The
+      hotend (Revo ~3.3 A) is fine on-board either way. → `scripts/wiring-map.md` §1.
 - [ ] **Dual Z motors.** The MK2.5S has Z-left + Z-right; the SKR has one Z port. Wire both to Z-MOT in
       series and confirm both screws turn the same direction. → `scripts/wiring-map.md`.
 - [ ] **Label every Prusa cable before unplugging** from the miniRambo: X/Y/**both Z**/E motors, hotend

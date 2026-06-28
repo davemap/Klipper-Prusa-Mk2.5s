@@ -9,14 +9,40 @@ in software (ON-PI-RUNBOOK step 7) — don't trust connector orientation.
 
 ## 🔴 READ FIRST — two things that aren't plug-and-play
 
-### 1) Heated bed → use an EXTERNAL bed MOSFET (don't run it through the board)
-Your 12V MK42 bed draws **~10–11 A** (~130 W at 12 V — a 24 V bed of the same power pulls only ~5 A).
-The SKR Mini E3 V3's onboard bed output (WSK220N04 FET, shared 20 A board fuse) and its bed screw
-terminal are sized for ~24 V/~5 A beds — **~11 A risks overheating the board's bed terminal/traces.**
-- **Do:** add an **external bed MOSFET module** (or a 12 V-rated SSR). Bed power (12 V) runs PSU → MOSFET →
-  bed. The board's **HB output** becomes the low-current *trigger* into the MOSFET's signal input.
-- Keep the **bed thermistor** on the board's TB input regardless (that's just a sensor).
-- The **hotend** is fine on-board: the 40 W 12 V Revo is only ~3.3 A → SKR HE0 handles it directly.
+### 1) Heated bed — external MOSFET (PHASED: direct today, MOSFET tomorrow)
+Your 12V MK42 bed draws **~10–15 A** (~130 W at 12 V — a 24 V bed of the same power pulls only ~5 A).
+The SKR Mini E3 V3's WSK220N04 bed FET itself loafs at this current (~0.25 W) — the real limit is the
+board's **bed screw terminal + PCB traces + the shared 20 A fuse headroom**, all sized for 24 V/~5 A beds.
+The documented failure mode is a **hot/melted bed terminal** (a thermal/fire risk), not a clean shutdown —
+and **Klipper cannot detect it** (it's a wiring issue, not a sensor/heater fault). So the high-current path
+gets moved off the board onto an external MOSFET. (Note: even Prusa's own miniRambo has an "add a bed
+MOSFET" mod for this same 12 V bed current.)
+
+A heated-bed MOSFET module is **purchased**, arriving ~next day. The hotend (Revo ~3.3 A) is fine on-board
+regardless. The bed thermistor stays on the board's **TB** input in both phases (it's just a sensor).
+
+**PHASE 1 — TODAY, bed wired DIRECT to the board (interim, MONITORED). This does NOT gate bringup.**
+- **Measure the bed first** (multimeter across the bed power terminals, cold): current = 12 ÷ R.
+  - ≥1.5 Ω (~≤8 A): low risk — proceed, still watch the first heat.
+  - ~1.1–1.4 Ω (~9–11 A): marginal — proceed but keep bed heating SHORT + ATTENDED.
+  - ≤1.0 Ω (~12 A+): don't heat the bed direct even briefly — do the non-bed commissioning today, wait for the MOSFET.
+- Bed → SKR **HB** terminal; screw **TIGHT**, use the thick stock bed wire (a loose screw is the #1 melt cause).
+- Do ALL non-bed commissioning freely today (directions, sensorless homing, probe/fsensor polarity, hotend
+  PID, extruder, fans). Then a SHORT attended bed heat + bed PID tune while you watch the HB terminal temp
+  (finger-near / IR thermometer). Warm = OK; too-hot-to-touch = stop.
+- **Until the MOSFET is in:** no long/unattended prints with the bed on, and keep bed temp modest (PLA ~60 °C,
+  not 90–100 °C ABS) — high temp = max current for the longest.
+
+**PHASE 2 — TOMORROW, install the MOSFET module (then unrestricted):**
+- Power off. Move the bed wires off the board's HB terminal.
+- Wire the module (standard heated-bed MOSFET, 3 terminal pairs):
+  - **PSU 12 V  →  module "Power Input"** (VCC/IN)
+  - **module "Output"  →  bed** (to the bed's power leads)
+  - **board's HB terminal  →  module "Signal/Trigger" input** (low-current trigger only)
+- Mount the module where it gets a little airflow; terminals tight.
+- **No printer.cfg change** — `heater_pin: PC9` now switches the trigger instead of the bed.
+- Power on → short heat test → **re-run `PID_CALIBRATE HEATER=heater_bed TARGET=60` → SAVE_CONFIG**
+  (the drive path changed slightly; cheap to re-confirm). Then resume normal/unattended printing.
 
 ### 2) Z has TWO motors, the SKR has ONE Z port
 The MK2.5S has a **Z-left and a Z-right** motor (dual lead screws). Wire **both** to the single SKR
@@ -39,7 +65,7 @@ coil pair), then set overall direction with the `!` on `stepper_z: dir_pin` in `
 |---|---|---|---|
 | Hotend heater (Revo 40W 12V) | **HE0** | heater_pin PC8 | ~3.3 A, on-board OK |
 | Hotend thermistor (Revo) | **TH0** | sensor_pin PA0 | type ATC Semitec 104GT-2 (verify vs your Revo) |
-| **Bed heater (MK42 12V)** | **external MOSFET** (triggered by **HB**) | heater_pin PC9 | see "external bed MOSFET" above — ~11 A |
+| **Bed heater (MK42 12V)** | TODAY: **HB** direct (monitored) · TOMORROW: via external MOSFET | heater_pin PC9 | phased — see §1; ~10–15 A |
 | Bed thermistor | **TB** | sensor_pin PC4 | EPCOS 100K B57560G104F |
 
 ## Fans (12V on VIN)

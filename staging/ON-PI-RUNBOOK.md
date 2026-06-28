@@ -9,6 +9,11 @@ Machine summary: Prusa **MK2.5S** · **BTT SKR Mini E3 V3.0** (STM32G0B1, TMC220
 **E3D Revo 40W 12V**, 0.4mm · stock extruder · **TMC2209 sensorless** X/Y · **PINDA2** Z ·
 **BTT ADXL345 (USB)** · **new dedicated Pi** (`mk25s.local`) · MainsailOS · two webcams · HyperPixel+KlipperScreen.
 
+> 🔌 **BED, today vs tomorrow:** the external bed MOSFET arrives tomorrow. TODAY the bed runs **direct** to
+> the board's HB terminal — measure bed R first, keep bed heating **short + attended**, watch the HB
+> terminal temp. Fine for commissioning + a short PLA test. TOMORROW install the MOSFET (PSU→IN, bed→OUT,
+> HB→trigger), re-run bed PID, then print unrestricted. Detail: `scripts/wiring-map.md` §1. This does NOT gate today.
+
 ---
 
 ## 0. Pre-flight (do `PREFLIGHT.md` first)
@@ -63,7 +68,8 @@ Machine summary: Prusa **MK2.5S** · **BTT SKR Mini E3 V3.0** (STM32G0B1, TMC220
 
 ## 9. PID tuning — MANDATORY for the 40W 12V Revo
 - [ ] `PID_CALIBRATE HEATER=extruder TARGET=215` → `SAVE_CONFIG`.
-- [ ] `PID_CALIBRATE HEATER=heater_bed TARGET=60` → `SAVE_CONFIG`.
+- [ ] `PID_CALIBRATE HEATER=heater_bed TARGET=60` → `SAVE_CONFIG`. **TODAY (bed direct): watch the HB
+      terminal temp** during this (a few min at temp). **Re-run it tomorrow** after the MOSFET goes in.
       Placeholder PID is wrong for your Revo/bed — do NOT print before this.
 
 ## 10. Webcams
