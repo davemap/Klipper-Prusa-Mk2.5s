@@ -73,6 +73,12 @@ G28              # once X/Y are solid, let it do Z off the PINDA
 PROBE_CALIBRATE  # -> adjust with the paper test -> ACCEPT -> SAVE_CONFIG  (real z_offset)
 ```
 
+> 🧪 **Deciding whether to keep the X/Y endstops?** You can prove sensorless homing on the real axes with a
+> stripped motion-only config (no heaters/probe needed) **before** finishing the rebuild — and the X-STOP/
+> Y-STOP pin is either-or (DIAG jumper *or* a switch), so test sensorless first. Full procedure + pass/fail
+> criteria: [staging/scripts/sensorless-endstop-test.md](staging/scripts/sensorless-endstop-test.md)
+> (uses [staging/config/homing-test.cfg](staging/config/homing-test.cfg)).
+
 ### 7 · PID tuning — MANDATORY (Revo) → [ON-PI-RUNBOOK.md](staging/ON-PI-RUNBOOK.md) step 9
 ```
 PID_CALIBRATE HEATER=extruder TARGET=215
