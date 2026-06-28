@@ -17,6 +17,7 @@ driving each output / reading each input over USB at 115200. This de-risked the 
 | Bed thermistor | TB | reads room temp |
 | HE0 heater | HE0 | heats clean (~53 s, 26→220 °C); melted + extruded filament |
 | Filament sensor | E0-STOP / PC15 | tracks filament reliably (7/7 flips). 5 V Prusa IR sensor wired **direct** — PC15 IS 5 V-tolerant as a digital GPIO input (loses tolerance only in oscillator/analog mode), so no resistor/divider needed. |
+| PINDA2 probe | PROBE / PC14 | detects ferrous metal reliably (4/4 flips); metal = TRIGGERED (matches `[probe] pin: ^PC14`). BROWN→5V, BLUE→GND, BLACK→PC14. Thermistor (WHITE) taped off — PRINT_START heat-soak used instead of temp-comp. |
 
 ## ⚙️ Findings to apply during Klipper bring-up
 - **`stepper_z` direction — INVERTED on the bench** (commanded up → went down). Expect to flip
@@ -29,9 +30,13 @@ driving each output / reading each input over USB at 115200. This de-risked the 
 - **Dual-Z:** the two Z motors run in sync on Z-MOT (series wiring good).
 
 ## ⏳ Not bench-tested (do in Klipper)
-- **Bed heater (HB):** kept unplugged during bench testing.
-- **PINDA probe (PROBE / PC14):** not configurable in the Ender-3 Marlin (that build homes Z off Z-STOP).
-  Test in Klipper with `QUERY_PROBE`, or via a temporary Marlin probe build.
+- **Bed heater (HB):** kept unplugged during bench testing — verify in Klipper (and via the external MOSFET).
+- (PINDA probe was tested via a temporary Marlin `FIX_MOUNTED_PROBE` build — see above.)
+
+## Display (stock Prusa LCD + dial) — wired, not yet verified
+- LCD + beeper on EXP1 (RS re-routed off the RST pin to EXP1 pin2/PA15); dial on spare pins PA1/PC12/PC2.
+  Marlin can't easily drive this (needs board-file hacking); it's a clean `[display] hd44780` in Klipper
+  (`display.cfg`) — verify there. See display.cfg for the full pin map.
 
 ## Note
 The temporary Marlin is **throwaway** — flash Klipper (SD-card `firmware.bin`) for the real setup. Tuned
