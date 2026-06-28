@@ -1,5 +1,11 @@
 # Sensorless homing test — decide: keep the endstops, or remove them?
 
+> ✅ **RESULT (2026-06-28): PASSED — going sensorless, no physical X/Y endstops.**
+> Validated on-hardware via a temporary custom Marlin build (SENSORLESS_HOMING, X/Y_STALL_SENSITIVITY 80):
+> both X and Y homed reliably and repeatably via StallGuard (G28 X/Y, multiple cycles, same stop point).
+> NOTE: the Marlin sensitivity (80) does NOT transfer to Klipper — re-tune `driver_SGTHRS` in `tmc2209.cfg`
+> on the Pi. What's proven is the *concept* works on this machine. Keep the X/Y DIAG jumpers installed.
+
 Goal: prove whether TMC2209 StallGuard sensorless homing on X and Y is reliable enough on YOUR machine,
 so you can decide before final assembly. (Z always homes off the PINDA — this is only about X/Y.)
 

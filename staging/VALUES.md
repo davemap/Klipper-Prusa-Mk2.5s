@@ -37,7 +37,7 @@ Stock limits: max_feedrate {200,200,12,120}, max_accel {1000,1000,200,5000}.
 | **Z-offset** | Stock firmware → *Menu → Calibration → Z-offset*. **Read BEFORE flashing — irreversible.** Make absolute. | `printer.cfg [probe] z_offset` |
 | **MCU serial** | On Pi: `ls /dev/serial/by-id/*` → `usb-Klipper_stm32g0b1xx_...-if00` | `printer.cfg [mcu] serial` |
 | **Motor directions** ×4 | Jog each axis in Mainsail; flip `!` on dir_pin if reversed. **Check Z first** (reversed Z homes downward). | `steppers.cfg` dir_pin |
-| **Sensorless SGTHRS** X/Y | On Pi: tune `driver_SGTHRS` per `tmc2209.cfg` procedure (DIAG jumpers installed first) | `tmc2209.cfg` |
+| **Sensorless SGTHRS** X/Y | ✅ Sensorless VALIDATED 2026-06-28 (temp Marlin build, both axes home reliably) → keep DIAG jumpers, NO physical X/Y endstops. Still tune `driver_SGTHRS` in Klipper (Marlin's value doesn't transfer). | `tmc2209.cfg` |
 | **Probe polarity** | On Pi: `QUERY_PROBE` (slide metal under PINDA) — flip `!` on `[probe] pin` if inverted | `skr-mini-e3-v3.cfg [probe]` |
 | **Filament-sensor polarity** | On Pi: `QUERY_FILAMENT_SENSOR` — flip `!` on switch_pin if inverted | `skr-mini-e3-v3.cfg fsensor` |
 | **PINDA x/y offset** | Measure on YOUR toolhead (PINDA tip vs nozzle) | `skr-mini-e3-v3.cfg [probe] x_offset/y_offset` |
