@@ -36,10 +36,10 @@ Stock limits: max_feedrate {200,200,12,120}, max_accel {1000,1000,200,5000}.
 |---|---|---|
 | **Z-offset** | Stock firmware → *Menu → Calibration → Z-offset*. **Read BEFORE flashing — irreversible.** Make absolute. | `printer.cfg [probe] z_offset` |
 | **MCU serial** | On Pi: `ls /dev/serial/by-id/*` → `usb-Klipper_stm32g0b1xx_...-if00` | `printer.cfg [mcu] serial` |
-| **Motor directions** ×4 | Jog each axis in Mainsail; flip `!` on dir_pin if reversed. **Check Z first** (reversed Z homes downward). | `steppers.cfg` dir_pin |
+| **Motor directions** ×4 | Bench-tested 2026-06-28: **Z and E ran INVERTED** → expect to flip their `dir_pin` (verify on-device, Z first — reversed Z homes downward). X/Y still verify. See BENCH-TEST-RESULTS.md. | `steppers.cfg` dir_pin |
 | **Sensorless SGTHRS** X/Y | ✅ Sensorless VALIDATED 2026-06-28 (temp Marlin build, both axes home reliably) → keep DIAG jumpers, NO physical X/Y endstops. Still tune `driver_SGTHRS` in Klipper (Marlin's value doesn't transfer). | `tmc2209.cfg` |
 | **Probe polarity** | On Pi: `QUERY_PROBE` (slide metal under PINDA) — flip `!` on `[probe] pin` if inverted | `skr-mini-e3-v3.cfg [probe]` |
-| **Filament-sensor polarity** | On Pi: `QUERY_FILAMENT_SENSOR` — flip `!` on switch_pin if inverted | `skr-mini-e3-v3.cfg fsensor` |
+| **Filament-sensor polarity** | ✅ Bench-confirmed 2026-06-28: sensor = 0V when filament present; `^!PC15` already matches → no change needed. | `skr-mini-e3-v3.cfg fsensor` |
 | **PINDA x/y offset** | Measure on YOUR toolhead (PINDA tip vs nozzle) | `skr-mini-e3-v3.cfg [probe] x_offset/y_offset` |
 | **Extruder PID** | On Pi: `PID_CALIBRATE HEATER=extruder TARGET=215` → `SAVE_CONFIG` | `[extruder]` PID — mandatory for the 40W 12V Revo |
 | **Bed PID** | On Pi: `PID_CALIBRATE HEATER=heater_bed TARGET=60` → `SAVE_CONFIG` | `[heater_bed]` PID |
