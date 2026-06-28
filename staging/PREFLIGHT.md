@@ -38,9 +38,12 @@ mainboard (miniRambo → SKR Mini E3 V3), so there's extra hardware work vs the 
       EXP1 header; a BTT mini12864 is the drop-in later if you want a physical knob — see config/display.cfg.)
 
 ## SD cards (TWO different cards)
-- [ ] **microSD for the SKR board** — small, **FAT32**. Klipper firmware is flashed by copying
-      `firmware.bin` to it (scripts/firmware-flash-cheatsheet.md).
-- [ ] **microSD for the Pi** — MainsailOS. Use a fresh card; this is a brand-new dedicated Pi.
+- [ ] **microSD for the SKR board** — **small is better: a 2–8 GB FAT32 card is ideal.** The STM32
+      bootloader is pickier with large (≥32 GB) / exFAT cards than with small FAT32 ones. Firmware is
+      <1 MB so capacity is never the limit. File must be named exactly `firmware.bin` at the root.
+      (scripts/firmware-flash-cheatsheet.md)
+- [ ] **microSD for the Pi** — MainsailOS needs **≥8 GB (16–32 GB recommended)**; a 2 GB card is too small.
+      Use a fresh card; this is a brand-new dedicated Pi.
 
 ## Have on hand
 - [ ] **USB-A↔USB-C (or micro-USB)** cable for the SKR↔Pi (check which USB port your V3.0 has).
