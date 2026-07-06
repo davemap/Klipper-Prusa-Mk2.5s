@@ -114,8 +114,10 @@ this orientation on the 64-bit twin). If touch comes out mirrored/wrong-way, try
 - The exact minimal env set wasn't bisected — `WLR_DRM_NO_ATOMIC=1` is the key; the others are
   belt-and-suspenders (software renderer + linear buffers + no HW cursor) and harmless.
 
-## Sources
-- forums.raspberrypi.com — "vc4-kms blackscreen only with 32bit" (RPi engineer: 32-bit userland issue)
-- forums.raspberrypi.com/viewtopic.php?t=351264 — "Works in console, stops working in X"
-- github.com/swaywm/wlroots `docs/env_vars.md` — `WLR_RENDERER`, `WLR_DRM_NO_MODIFIERS`, `WLR_DRM_NO_ATOMIC`
-- github.com/pimoroni/hyperpixel4 issues #177 (PSA, 64-bit), #154/#229 (blank-screen reports)
+## Sources (verified)
+- **[Raspberry Pi 3, vc4-kms blackscreen only with 32bit](https://forums.raspberrypi.com/viewtopic.php?p=2343864)** — reproduces by swapping armhf↔arm64 SD cards on one Pi 3 (64-bit `vc4-kms-v3d` works, 32-bit = black). RPi engineer **Dom**: *"the kernel driver is fine but you have a userland issue with X… I wonder if this issue is an old X issue where it gets confused over the two dri cards."*
+- **["Works in console, stops working in X"](https://forums.raspberrypi.com/viewtopic.php?p=2347351)** (same thread) — *"The framebuffer console (both the initial firmware one and the later DRM one) both work perfectly fine. Starting Xorg causes the issues."*
+- **[CM5 + vc4-kms: "only LINEAR scans out / --use-pixman works"](https://forums.raspberrypi.com/viewtopic.php?p=2309955)** — corroborates the *mechanism* (non-LINEAR/tiled buffers don't scan out on vc4; software/pixman rendering restores output). ⚠️ This is a **CM5 + Buildroot/Weston** case, not HyperPixel/Pi 3 — cited for the mechanism, not the same hardware.
+- **[wlroots `docs/env_vars.md`](https://github.com/swaywm/wlroots/blob/master/docs/env_vars.md)** — `WLR_RENDERER=pixman` (software renderer), `WLR_DRM_NO_ATOMIC=1` (legacy modeset), `WLR_DRM_NO_MODIFIERS=1` (allocate planes without modifiers).
+- **Pimoroni hyperpixel4:** [#177 PSA (64-bit)](https://github.com/pimoroni/hyperpixel4/issues/177), [#154](https://github.com/pimoroni/hyperpixel4/issues/154), [#229](https://github.com/pimoroni/hyperpixel4/issues/229) — black-screen reports.
+- **Touch:** [cage #126](https://github.com/cage-kiosk/cage/issues/126) (touch doesn't follow output transform — null `output_name`), [wlroots #928](https://github.com/swaywm/wlroots/issues/928) (touch events ignore output rotation).

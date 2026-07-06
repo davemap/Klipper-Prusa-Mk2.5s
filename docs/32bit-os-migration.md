@@ -12,15 +12,23 @@ under-voltage, no USB error — then the hardware watchdog reboots it ~60 s late
 (RAM/CPU/temp) are healthy throughout. It happens on this SKR-based Pi but **never** on the twin
 MK3S-based Pi running the *identical* 64-bit image.
 
-This matches, **exactly**, `drdan_makes` in the Voron thread
-[Random halts/freezes of Klipper RPi](https://forum.vorondesign.com/threads/random-halts-freezes-of-klipper-rpi-software-hardware.2148/):
+This matches, **exactly**, the fix documented in the Voron thread
+[Random halts/freezes of Klipper RPi](https://forum.vorondesign.com/threads/random-halts-freezes-of-klipper-rpi-software-hardware.2148/)
+(title *"Solved - Random halts/freezes of Klipper/RPi/software/hardware…?"*):
 Pi 3B+, mid-print freeze, log cuts off clean, temps/CPU/RAM fine, power-cycle to recover,
-reinstalling 64-bit did **not** help — **switching to 32-bit Pi OS fixed it.** The Pi 3B+ is
-known to be less stable on aarch64; a 32-bit kernel appears more resilient to whatever wedges it.
+reinstalling 64-bit did **not** help — **switching to 32-bit Pi OS fixed it.** A second poster
+reports the same with MainsailOS (64-bit froze, 32-bit fixed). The Pi 3B+ is known to be less stable
+on aarch64 (1 GB RAM is tight for 64-bit Klipper); a 32-bit kernel appears more resilient to whatever
+wedges it. The thread also records a **ZRAM** workaround as an alternative (mixed results).
+
+> Source note: the thread URL, title, and content above are verified. We recall the specific 32-bit-fix
+> post as being by the handle `drdan_makes`; the thread sits behind Cloudflare, which blocked
+> re-fetching to machine-confirm that byline, so treat the handle attribution as our own reading of the
+> thread, not independently re-verified.
 
 > Honest caveat: our forensics point to a **hardware electrical trigger** (only the un-choked SKR
 > USB link crashes; the MK3S Einsy has a USB common-mode choke). 32-bit likely won't *prevent* the
-> electrical event — but drdan_makes' result says it may let the kernel *survive* it. Run this
+> electrical event — but the Voron thread's result says it may let the kernel *survive* it. Run this
 > alongside the **USB isolator** (which removes the glitch) — they're complementary.
 
 ## Prerequisites
@@ -127,8 +135,8 @@ We actually did this migration. Notes from the field:
 
 **Crash A/B result — promising, not yet conclusive.** On 32-bit the same Benchy that froze the 64-bit
 card **3 of its last 4 attempts** (in the 74–82% "danger zone") **completed cleanly twice in a row**,
-including a **4 h 16 m continuous crash-free uptime**. Encouraging and it matches the documented
-`drdan_makes` 32-bit fix — but the freeze is *intermittent*, so this isn't proof. The definitive test
+including a **4 h 16 m continuous crash-free uptime**. Encouraging and it matches the Voron thread's
+documented 32-bit fix — but the freeze is *intermittent*, so this isn't proof. The definitive test
 is an **acceleration-stress run**: crank accel (via an `M204` multiplier, no re-slice) to raise the
 electrical-noise level and see whether 32-bit can still be *forced* to freeze. If it can → it's
 electrical noise (32-bit only raised the threshold); if it rides it out → genuine OS-level resilience.

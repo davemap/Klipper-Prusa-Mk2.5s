@@ -209,7 +209,9 @@ drivers** (open-circuiting an energized coil), and likely contributed to the ear
 2. **USB isolator** (ADuM3160/4160, full-speed 12 Mbps — matches the SKR's USB) — galvanic break of the
    conducted noise/ground path. Belt-and-suspenders with the re-crimp.
 3. Clip-on ferrites on motor + USB leads; **32-bit Pi OS** on a spare SD (documented exact-symptom fix
-   on the Pi 3B+ — see `docs/32bit-os-migration.md`) as a host-resilience A/B.
+   on the Pi 3B+ in the Voron forum thread
+   [Random halts/freezes of Klipper/RPi](https://forum.vorondesign.com/threads/random-halts-freezes-of-klipper-rpi-software-hardware.2148/)
+   — see `docs/32bit-os-migration.md`) as a host-resilience A/B.
 
 Validate by **crash-free reliability over several prints**, not one Benchy (it's intermittent).
 Full analysis: `staging/pi-crash-usb-emi-fix.md`.
