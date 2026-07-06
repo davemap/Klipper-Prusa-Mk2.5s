@@ -82,6 +82,20 @@ Assumes Klipper/Moonraker/KlipperScreen already installed, `vc4-kms-v3d` +
 `screen_blanking_printing: 600`) — note KlipperScreen mirrors these in a `#~#` auto-save block at the
 bottom of the file, so change them in **both** places.
 
+## Touch calibration (rotated display)
+After rotating the output, **touch does not follow** — the cursor roams and clicks land in the wrong
+place. Cause: cage/wlroots doesn't apply the output transform to touch input when libinput reports a
+**null `output_name`** for the device (cage bug #126 / wlroots #928). Fix it one level down, at
+**libinput**, with a calibration matrix via a udev rule (bypasses the compositor):
+```
+# /etc/udev/rules.d/99-hyperpixel-touch.rules
+ATTRS{name}=="Goodix Capacitive TouchScreen", ENV{LIBINPUT_CALIBRATION_MATRIX}="0 -1 1 1 0 0"
+```
+Then `sudo udevadm control --reload && sudo udevadm trigger`, and restart KlipperScreen. The
+`0 -1 1 1 0 0` matrix is the 90° rotation (identical to the X11 `TransformationMatrix` that worked for
+this orientation on the 64-bit twin). If touch comes out mirrored/wrong-way, try the other rotations:
+180° = `-1 0 1 0 -1 1`, 270° = `0 1 0 -1 0 1`.
+
 ## What did NOT work (so you don't waste time)
 - X11 (default `modesetting`), X11 `Option "PageFlip" "false"`, X11 `fbdev` driver — all black.
 - Wayland/cage with the **default GLES renderer** — black.
