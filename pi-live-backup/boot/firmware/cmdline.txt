@@ -1,0 +1,1 @@
+console=tty1 root=PARTUUID=398864cf-02 rootfstype=ext4 fsck.repair=yes rootwait ds=nocloud;i=rpi-imager-1783090779762 cfg80211.ieee80211_regdom=GB

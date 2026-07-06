@@ -1,0 +1,19 @@
+[Unit]
+Description=Auto-recover Klipper after physical MCU reset (Lost communication watcher)
+Documentation=file:///home/david/mcu-reset-recovery/README.md
+After=network-online.target moonraker.service klipper.service
+Wants=moonraker.service
+
+[Service]
+Type=simple
+User=david
+Group=david
+ExecStart=/usr/bin/python3 -u /home/david/mcu-reset-recovery/mcu_reset_recovery.py
+Restart=on-failure
+RestartSec=10
+# journald parses <N> priority prefixes emitted by the script (default,
+# stated here for clarity)
+SyslogLevelPrefix=true
+
+[Install]
+WantedBy=multi-user.target

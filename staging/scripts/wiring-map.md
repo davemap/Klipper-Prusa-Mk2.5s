@@ -81,7 +81,7 @@ coil pair), then set overall direction with the `!` on `stepper_z: dir_pin` in `
 |---|---|---|---|
 | Part-cooling fan | **FAN0** | `[fan]` PC6 | slicer-controlled M106 |
 | Hotend/heatbreak fan | **FAN1** | `[heater_fan heatbreak_cooling_fan]` PC7 | auto-on when hotend hot |
-| (FAN2 unused) | — | — | PB15 shares EXP1_8; no tach inputs on these ports |
+| **Bed-MOSFET cooling fan** (12V) | **FAN2** | `[heater_fan bed_mosfet_fan]` PB15 | auto-on with bed heat; cools the external MOSFET. (PB15 is free on V3.0 — the "shares EXP1_8" caveat was V2.0-only.) No tach inputs on these ports. |
 
 ## Probe, endstops, filament sensor
 | Prusa cable | SKR connector | Klipper | Notes |
@@ -94,9 +94,13 @@ coil pair), then set overall direction with the `!` on `stepper_z: dir_pin` in `
 | IR filament sensor (3 wires) | **E0-DET** | `fsensor` switch_pin ^!PC15 | 5V sensor → verify signal level vs PC15 + polarity (`QUERY_FILAMENT_SENSOR`); optional, can disable |
 
 ## Display / misc
-- **No board LCD** (touchscreen-only). Optional: a piezo on **EXP1 pin 1 (PB5)** gives M300 beeps.
+- **Stock Prusa 20x4 LCD + dial + beeper: WIRED AND WORKING** (bench-verified 2026-06-29).
+  Full pin map + rationale in `config/display.cfg`. Summary: EXP1 1=D6, 2=D7, 3=EN1(rotate),
+  4=RESET(button), 5=EN2(rotate), 6=D4, 7=RS, 8=EN, 9=GND, 10=5V; D5→PA1 (probe conn middle pin);
+  click→PC2 (Z-STOP); beeper→PC12 (PWR-DET). Do NOT "tidy" the click/beeper back onto EXP1 —
+  the endstop pins' 100nF debounce caps corrupt fast LCD data but are fine for slow signals.
 - HyperPixel + Pi are separate (host side) — not wired to this board.
-- Optional: **PWR-DET** (PC12) for power-loss detection — not configured; ignore for now.
+- PWR-DET (PC12) and Z-STOP (PC2) are CONSUMED by the display map above (beeper / click).
 
 ## Order of operations (safe bring-up)
 1. Wire everything EXCEPT bed + hotend heaters. Power on at 12V over USB only (or PSU with heaters off).

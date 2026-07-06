@@ -36,17 +36,17 @@ firmware). Nothing measured-on-hardware was fabricated — those are TODO/VERIFY
 | Bed thermistor | EPCOS 100K B57560G104F | Prusa MK42 standard; verify if temps read off. |
 | Run currents | X/Y/Z 0.55A, E 0.45A (RMS) | Conservative TMC2209 equivalents of Prusa's ~0.75A-peak RAMBo currents. Tune. |
 
-## Display (decision: TOUCHSCREEN-ONLY)
-The SKR Mini E3 V3 has only **one** LCD header (EXP1, no EXP2) with **7 usable GPIO** (EXP1_4 is RESET).
-A parallel Prusa HD44780 + rotary encoder + beeper needs ~10 signals — **they don't all fit**. And in
-Klipper a bare encoder only drives the on-board `[display]` menu (which needs a board LCD) and does NOT
-control KlipperScreen — so wiring just the Prusa knob does nothing useful. **Decision: run the HyperPixel +
-KlipperScreen as the only UI.** So `display.cfg`:
-- Wires only the **BEEPER** on EXP1_1 (PB5) so M300/feedback tones work.
-- Points to the **BTT mini12864** (SPI graphic LCD + built-in encoder; fits EXP1) as the drop-in if a
-  physical knob is wanted later — copy the `uc1701` block from `reference/klipper-sample-lcd.cfg`.
-> Also note: FAN2 (PB15) shares a pin with EXP1_8 — irrelevant here (FAN0 part-cooling + FAN1 hotend
-> cover the MK2.5S; we don't use FAN2).
+## Display (FINAL: stock Prusa LCD + dial + beeper — WORKING, bench-verified 2026-06-29)
+(Supersedes the earlier "touchscreen-only" decision.) The SKR has one LCD header (EXP1, no EXP2)
+with 7 usable GPIO (EXP1_4 is RESET), and a parallel HD44780 + encoder + beeper needs 10 signals —
+so 3 signals must spill onto spare board pins. The critical lesson (a full day of debugging): the
+spare **endstop pins carry ~100nF debounce caps** that corrupt fast LCD **data** lines (repeatable
+garble) while being fine for slow signals. Final map in `display.cfg`: all 6 LCD data/control lines
+on clean pins (EXP1 + PA1), and the SLOW signals take the filtered pins (beeper→PC12, click→PC2).
+Dial navigates, LCD renders, works alongside HyperPixel/KlipperScreen as a second UI.
+> Correction to an earlier note: "FAN2 (PB15) shares EXP1_8" was **V2.0-only** lore. On V3.0
+> EXP1_8 = PD6 and **FAN2/PB15 is free** — it now drives the bed-MOSFET cooling fan
+> (`[heater_fan bed_mosfet_fan]`, added 2026-07-03).
 
 ## Deliberately NOT changed
 - **Bed-mesh faulty regions** from the MK3S+ build were **removed** (those magnet coords are MK52/MK3,

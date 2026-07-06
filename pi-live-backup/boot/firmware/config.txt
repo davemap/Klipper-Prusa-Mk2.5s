@@ -1,0 +1,132 @@
+# For more options and information see
+# http://rptl.io/configtxt
+# Some settings may impact device functionality. See link above for details
+
+# Uncomment some or all of these to enable the optional hardware interfaces
+#dtparam=i2c_arm=on
+#dtparam=i2s=on
+#dtparam=spi=on
+
+# Enable audio (loads snd_bcm2835)
+dtparam=audio=on
+
+# Additional overlays and parameters are documented
+# /boot/firmware/overlays/README
+
+# Automatically load overlays for detected cameras
+camera_auto_detect=1
+
+# Automatically load overlays for detected DSI displays
+display_auto_detect=1
+
+# Automatically load initramfs files, if found
+auto_initramfs=1
+
+# Enable DRM VC4 V3D driver
+dtoverlay=vc4-kms-v3d
+max_framebuffers=2
+
+# Don't have the firmware create an initial video= setting in cmdline.txt.
+# Use the kernel's default instead.
+disable_fw_kms_setup=1
+
+# Run in 64-bit mode
+arm_64bit=1
+
+# Disable compensation for displays with overscan
+disable_overscan=1
+
+# Run as fast as firmware / board allows
+arm_boost=1
+
+[cm4]
+# Enable host mode on the 2711 built-in XHCI USB controller.
+# This line should be removed if the legacy DWC2 controller is required
+# (e.g. for USB device mode) or if USB support is not required.
+otg_mode=1
+
+[cm5]
+dtoverlay=dwc2,dr_mode=host
+
+[all]
+
+####################################################
+####     MainsailOS specific configurations     ####
+####################################################
+####      DO NOT CHANGE SECTION BELOW !!!       ####
+####   UNLESS YOU KNOW WHAT YOU ARE DOING !!!   ####
+####################################################
+
+## For more options and information see
+## https://www.raspberrypi.com/documentation/computers/config_txt.html
+## Some settings may impact device functionality. See link above for details
+
+## For additional information about device filters see
+## https://www.raspberrypi.com/documentation/computers/config_txt.html#model-filters
+
+
+[pi0]
+## This affects Pi Zero(W) and Pi Zero2
+## Due lag of RAM, limit GPU RAM
+gpu_mem=128
+
+[pi2]
+gpu_mem=256
+
+[pi3]
+## Use 256 if 1Gb Ram Model!
+gpu_mem=128
+# gpu_mem=256
+
+[pi4]
+## Do not use more than 256Mb on Pi Model 4, it uses its own Management.
+gpu_mem=256
+
+[all]
+
+## SPI Interface is enabled by default for Input Shaper
+## This colides with Hyperpixel Display!
+## Hyperpixel Screen uses the same Pin for Backlight.
+#dtparam=spi=on  # disabled for HyperPixel (GPIO/DPI conflict)
+
+
+## Enable Hardware UART for Serial Communication
+## This also disables Bluetooth!
+enable_uart=1
+dtoverlay=disable-bt
+
+## Enable I2C by default.
+## This is used by Klipper's Host MCU
+## See https://www.klipper3d.org/RPi_microcontroller.html#optional-enabling-i2c
+## for destails.
+## For MPU Accelrometer please use
+## dtparam=i2c_arm=on,i2c_arm_baudrate=400000
+#dtparam=i2c_arm=on  # disabled for HyperPixel (GPIO/DPI conflict)
+
+
+### EXPERIMENTAL - Enable 64bit Kernel
+### The 64-bit kernel will only work on:
+### Raspberry Pi 3, 3+, 4, 400, Zero 2 W and 2B rev 1.2
+### and Raspberry Pi Compute Modules 3, 3+ and 4.
+# arm_64bit=1
+
+####################################################
+
+[all]
+
+# --- HyperPixel 4.0 display (added 2026-07-03, cloned from the working mk3s Pi) ---
+# Same panel + orientation as mk3s: rectangular 800x480, rotated 270.
+# TEMP-DISABLED 2026-07-04 to break the post-update boot loop: kernel 6.18.34 + this
+# DPI overlay soft-locks -> watchdog reboots (no panic= in cmdline). Re-enable this line
+# once the overlay/kernel compat is fixed. Backup: config.txt.bak-20260704-preHyperpixelDisable
+dtoverlay=vc4-kms-dpi-hyperpixel4,rotate=270
+
+# --- Crash capture: ramoops/pstore (added 2026-07-05, crash diagnosis) ---
+# Reserves a DRAM region so the kernel ring buffer (oops/panic/watchdog reset)
+# survives a WARM reboot. Takes effect on NEXT reboot. Read it with:
+#   sudo cat /sys/fs/pstore/dmesg-ramoops-0    (right after next boot)
+#   ls /var/lib/systemd/pstore/                (systemd archives crash dumps here)
+#   journalctl -b 0 -k                         (this-boot kernel log; now persistent)
+# CAVEAT: only captures if DRAM survived (kernel panic / soft-lock / watchdog reset).
+# A true power BROWNOUT wipes DRAM -> nothing captured; use the FTDI serial console.
+dtoverlay=ramoops

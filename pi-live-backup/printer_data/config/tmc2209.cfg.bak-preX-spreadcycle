@@ -35,8 +35,7 @@ run_current: 0.550
 interpolate: True
 stealthchop_threshold: 999999          # stealthChop for quiet travel; StallGuard homing still works
 diag_pin: ^PC0                         # X-STOP header — needs the DIAG jumper installed (see above)
-driver_SGTHRS: 115                     # ✅ TUNED ON-DEVICE 2026-07-04: 80 crashed hard; 100 was inconsistent
-                                       # (1 soft / 2 crash); 115 homes soft + consistent, still reaches the end. (Y=110.)
+driver_SGTHRS: 115                     # TUNED 2026-07-04: soft + consistent (80 crashed, 100 inconsistent)
 
 [tmc2209 stepper_y]
 uart_pin: PC11
@@ -44,14 +43,9 @@ tx_pin: PC10
 uart_address: 2
 run_current: 0.550
 interpolate: True
-stealthchop_threshold: 999999
+stealthchop_threshold: 80        # HYBRID: stealthChop <80mm/s (sensorless homing works as tuned), spreadCycle >80 (Y torque at speed)
 diag_pin: ^PC1                         # Y-STOP header — needs the DIAG jumper installed (see above)
-driver_SGTHRS: 110                     # ✅ TUNED ON-DEVICE 2026-07-03. Started at 80 (homed cold, but
-                                       # UNDER-triggered warm -> Y rammed the end). 110 homes cleanly +
-                                       # repeatably warm. NOTE: StallGuard drifts with motor temp — if Y
-                                       # ever rams again, nudge higher; if it stops short, ease down.
-                                       # ✅ RE-VERIFIED still-good (soft + consistent) after the Y bearing
-                                       # regrease/partial-swap on 2026-07-04, so kept at 110.
+driver_SGTHRS: 110                     # RAISED from 80 (2026-07-03): 80 under-triggered when motors warm -> Y rammed the end
 
 [tmc2209 stepper_z]
 uart_pin: PC11
