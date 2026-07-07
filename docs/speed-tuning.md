@@ -36,12 +36,23 @@ limit per print, run the *same* Benchy, keep the last known-good, revert on fail
 | 0 | baseline | accel ≤3000, vel 200, SCV 5, Y 0.55 A | clean | known-good |
 | 1 | **accel 4000** (slicer M204) | vel 200, SCV 5, Y 0.55 A | **clean** — 45.4 min, MCU 9 retransmits, no shift | **accel 4000 is safe on Y**; slicer ceiling reached |
 | 2 | **max_velocity 250** | SCV 5, accel 4000, Y 0.55 A | **Y skip** | velocity ceiling is **< 250** at stock current |
-| 3 | **Y run_current 0.55 → 0.70 A** | vel 250, SCV 5, accel 4000 | *pending* | testing whether more Y torque clears 250 mm/s |
-| — | SCV 5 → ? | vel 200 | *not yet run* | still unknown whether SCV 8 alone is OK |
+| 3 | **Y run_current 0.55 → 0.70 A** | vel 250, SCV 5, accel 4000 | **Y skip (still)** | +27 % current did **not** clear 250 — velocity is past this Y's practical limit; current is the wrong lever here |
+| — | SCV 5 → ? | vel 200 | *deferred* | worth trying after the Y bearing replacement (see below) |
 
 **Bisection payoff:** the original three-variable skip is now explained — accel 4000 is fine and
 velocity 250 skips, so **velocity was (at least) a culprit**. Whether SCV 8 alone (at vel 200) is
 acceptable remains the informative next single-variable test.
+
+**Velocity verdict:** velocity 250 skips Y at **both** 0.55 A and 0.70 A, so it is past this
+machine's practical Y ceiling — and pushing current (a noise source) to chase it is the wrong trade
+on a printer whose defining fault is an electrical-noise host crash. **Bank vel 200.** The Y bearings
+are due for replacement; worn bearings add friction and lower the torque-at-speed ceiling, so
+**revisit velocity (and SCV) *after* the bearing swap** — buy the margin mechanically, not with motor
+current.
+
+> Data point: the 0.70 A home was **clean** — sensorless homing (`SGTHRS 110`) tolerated the current
+> change with no re-tune. So current isn't off the table forever; it just isn't worth the added noise
+> here for a travel-only speed gain.
 
 ## Why Y is the limit (bed-slinger torque-at-speed)
 
@@ -59,8 +70,9 @@ source, so these levers are **not** free:
 1. **Mechanical — zero noise cost, do first.** Y belt tension (firm, low "twang", not floppy);
    smooth rods clean + lightly oiled; bed glides freely by hand with power off. A loose belt or dry
    bearing is the **#1 cause of high-speed Y skips** and costs nothing electrically.
-2. **Y `run_current` bump** (tried: 0.55 → 0.70 A, +27 %). Direct torque, **but adds electrical
-   noise + heat**. The Prusa Y motor is rated well above this; keep RMS ≲ 0.8 A on the SKR's
+2. **Y `run_current` bump** (tried 0.55 → 0.70 A, +27 % — **did not clear vel 250; reverted**).
+   Direct torque, **but adds electrical noise + heat**, and here it bought nothing. The Prusa Y motor
+   is rated well above this; keep RMS ≲ 0.8 A on the SKR's
    un-fanned TMC2209. ⚠ **Side effect — sensorless homing:** StallGuard's stall signature depends on
    current, so after a current change **watch the first Y home** — if Y rams the frame
    (under-trigger) or stops short (over-trigger), re-tune `driver_SGTHRS` (this build already raised
