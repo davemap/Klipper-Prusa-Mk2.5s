@@ -227,6 +227,19 @@ Wayland/cage + `WLR_DRM_NO_ATOMIC=1`, see `docs/hyperpixel-klipperscreen-32bit-f
 
 ---
 
+### 10. Speed tuning (one variable at a time)
+
+Unlocking speed on the bed-slinger, disciplined so it doesn't cost Y steps or worsen the noise
+crash. Full method + results table + mitigation levers: **`docs/speed-tuning.md`**. Headlines so far
+(PLA Benchy): **accel 4000 is safe on Y** (slicer ceiling, clean); **velocity 250 skips Y** at stock
+0.55 A current (ceiling < 250); currently testing a **Y `run_current` 0.55 → 0.70 A** bump to see if
+more torque clears 250. Key facts: `max_velocity`/SCV are hard caps in `printer.cfg`; `max_accel` is
+a default the slicer's `M204` overrides; Klipper has **no per-axis accel**, so Y (the moving bed)
+sets the machine limit. Motor current is a noise source, so torque bumps trade against crash
+resilience — do the free mechanical checks (belt/rods) first.
+
+---
+
 ## Key lessons (the transferable bits)
 
 - **Keep an identical-twin control if you can.** A second Klipper Pi on known-good hardware, running the
